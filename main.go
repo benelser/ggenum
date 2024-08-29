@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	// Get the CUSTOMER_ID as a command-line argument
+	// set up flags
 	customerID := flag.String("customer_id", "", "The customer ID to use.")
 	keyPath := flag.String("key", "key.json", "Path to the client secret JSON file.")
 
@@ -28,7 +28,6 @@ func main() {
 		log.Fatal("customer_id must be provided")
 	}
 
-	// Load client secrets from the specified file
 	b, err := os.ReadFile(*keyPath)
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
@@ -36,13 +35,12 @@ func main() {
 
 	ctx := context.Background()
 
-	// Configuring OAuth2
 	config, err := google.ConfigFromJSON(b, admin.AdminDirectoryGroupReadonlyScope, groupssettings.AppsGroupsSettingsScope)
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}
 
-	// Check if token.json exists and if the token is valid
+	// see if we have a valid local token
 	token, err := getTokenFromFile("token.json")
 	if err != nil || !token.Valid() {
 		token = getTokenFromWeb(config)
@@ -51,16 +49,13 @@ func main() {
 		fmt.Println("Reusing existing token.")
 	}
 
-	// Use the token to create an authenticated HTTP client
 	client := config.Client(ctx, token)
 
-	// Create the Admin SDK Directory service
 	directoryService, err := admin.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		log.Fatalf("Unable to create Admin SDK Directory service: %v", err)
 	}
 
-	// Create the Groups Settings service
 	groupSettingsService, err := groupssettings.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		log.Fatalf("Unable to create Groups Settings service: %v", err)
