@@ -16,4 +16,4 @@ admin.googleapis.com
 ```bash
 go run main.go -customer_id=CUSTOMER_ID --key=OAUTH_CLIENT_CREDS.json
 ```
-7. Copy paste login url in browser and sign in using creds that have access. (Subsequent runs reuses valid token)# ggenum
+7. Copy paste login url in browser and sign in using creds that have access. (Subsequent runs reuses valid token)
